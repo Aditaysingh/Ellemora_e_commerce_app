@@ -27,6 +27,7 @@ class ProductDetailScreen extends StatelessWidget {
         ),
         actions: [
           badges.Badge(
+            showBadge: cartProvider.cartItemCount > 0,
             badgeContent: Text(
               cartProvider.cartItemCount.toString(),
               style: const TextStyle(color: Colors.white),
@@ -102,7 +103,7 @@ class ProductDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                     onPressed: () {
                       cartProvider.addToCart(product);
                       cartProvider.showNotification(product);
@@ -116,7 +117,8 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(width: screenWidth * 0.05),
                 Expanded(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                    
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                     onPressed: () {},
                     child: Text(
                       'Buy',

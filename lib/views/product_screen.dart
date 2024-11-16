@@ -22,6 +22,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void initState() {
     super.initState();
     _loadProducts();
+    Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -55,7 +56,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final products = Provider.of<ProductProvider>(context).products;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
-
     bool isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(

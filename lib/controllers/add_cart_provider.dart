@@ -1,5 +1,6 @@
 import 'package:e_commerce_app/model/products_model.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
@@ -8,19 +9,33 @@ import '../main.dart';
 
 class CartProvider with ChangeNotifier {
   List<ProductsModel> _cartItems = [];
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = flutterLocalNotificationsPlugin;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      flutterLocalNotificationsPlugin;
 
   List<ProductsModel> get cartItems => _cartItems;
+  int get cartItemCount => _cartItems.length;
 
   CartProvider() {
     loadCartData();
   }
 
   Future<void> addToCart(ProductsModel product) async {
-    _cartItems.add(product);
-    notifyListeners();
-    await saveCartData();
-    await showNotification(product);
+    final isAlreadyInCart = _cartItems.any((item) => item.id == product.id);
+    if (isAlreadyInCart) {
+      Fluttertoast.showToast(
+        msg: "Your item is already added",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+
+    } else {
+      _cartItems.add(product);
+      notifyListeners();
+      await saveCartData();
+      await showNotification(product);
+    }
   }
 
   Future<void> removeFromCart(ProductsModel product) async {
@@ -31,7 +46,8 @@ class CartProvider with ChangeNotifier {
 
   Future<void> saveCartData() async {
     final prefs = await SharedPreferences.getInstance();
-    final cartData = _cartItems.map((item) => json.encode(item.toJson())).toList();
+    final cartData =
+        _cartItems.map((item) => json.encode(item.toJson())).toList();
     prefs.setStringList('cartData', cartData);
   }
 
@@ -39,14 +55,16 @@ class CartProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final cartData = prefs.getStringList('cartData');
     if (cartData != null) {
-      _cartItems = cartData.map((item) => ProductsModel.fromJson(json.decode(item))).toList();
+      _cartItems = cartData
+          .map((item) => ProductsModel.fromJson(json.decode(item)))
+          .toList();
       notifyListeners();
     }
   }
 
-
   Future<void> showNotification(ProductsModel product) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
       'cart_channel',
       'Cart Notifications',
       channelDescription: 'Notifications for items added to the cart',
@@ -54,7 +72,8 @@ class CartProvider with ChangeNotifier {
       priority: Priority.high,
       showWhen: false,
     );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await _flutterLocalNotificationsPlugin.show(
       0,
@@ -63,6 +82,4 @@ class CartProvider with ChangeNotifier {
       platformChannelSpecifics,
     );
   }
-
-  int get cartItemCount => _cartItems.length;
 }

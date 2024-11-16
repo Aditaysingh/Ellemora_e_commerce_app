@@ -13,6 +13,8 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final wishlistProvider = Provider.of<WishlistProvider>(context);
     final isInWishlist = wishlistProvider.isInWishlist(product);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -24,24 +26,33 @@ class ProductItem extends StatelessWidget {
       },
       child: Card(
         elevation: 4,
+        margin: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.02,
+          vertical: screenHeight * 0.01,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: Stack(
                 children: [
-                  Image.network(
-                    product.image!,
-                    fit: BoxFit.cover,
+                  SizedBox(
                     width: double.infinity,
+                    height: screenHeight * 0.4,
+                    child: Image.network(
+                      product.image!,
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                  // Wishlist Icon
                   Positioned(
-                    top: 8,
-                    right: 8,
+                    top: screenHeight * 0.01,
+                    right: screenWidth * 0.02,
                     child: IconButton(
                       icon: Icon(
                         isInWishlist ? Icons.favorite : Icons.favorite_border,
                         color: isInWishlist ? Colors.red : Colors.grey,
+                        size: screenWidth * 0.06,
                       ),
                       onPressed: () {
                         if (isInWishlist) {
@@ -55,32 +66,47 @@ class ProductItem extends StatelessWidget {
                 ],
               ),
             ),
+            // Product Title
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(screenWidth * 0.03),
               child: Text(
                 product.title!,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.030,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            // Product Price
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text('\$${product.price.toString()}'),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+              child: Text(
+                '\$${product.price.toString()}',
+                style: TextStyle(fontSize: screenWidth * 0.04),
+              ),
             ),
-            const SizedBox(height: 5,),
+            SizedBox(height: screenHeight * 0.008),
+            // Ratings Row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 20,),
-                const SizedBox(
-                  width: 4,
+                Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                  size: screenWidth * 0.05,
                 ),
-                Text(product.rating?.rate?.toStringAsFixed(1) ?? "N/A"),
-                SizedBox(
-                  width: 4,
+                SizedBox(width: screenWidth * 0.008),
+                Text(
+                  product.rating?.rate?.toStringAsFixed(1) ?? "N/A",
+                  style: TextStyle(fontSize: screenWidth * 0.04),
                 ),
-                Text("(${product.rating?.count ?? 0})")
+                SizedBox(width: screenWidth * 0.008),
+                Text(
+                  "(${product.rating?.count ?? 0})",
+                  style: TextStyle(fontSize: screenWidth * 0.035),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),

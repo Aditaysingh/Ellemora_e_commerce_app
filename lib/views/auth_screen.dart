@@ -52,8 +52,8 @@ class _AuthScreenState extends State<AuthScreen> {
           textColor: Colors.white,
         );
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ProductListScreen()),
+          context,
+          MaterialPageRoute(builder: (context) => const ProductListScreen()),
         );
       }
     } catch (error) {
@@ -65,6 +65,31 @@ class _AuthScreenState extends State<AuthScreen> {
         textColor: Colors.white,
       );
     }
+  }
+
+  Widget _buildTextField({
+    required String labelText,
+    required IconData icon,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: screenWidth > 600 ? 400 : screenWidth * 0.9,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+      ),
+    );
   }
 
   @override
@@ -81,122 +106,108 @@ class _AuthScreenState extends State<AuthScreen> {
         backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: screenWidth * 0.10),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: Column(
-                    children: [
-                      Text("Welcome", style: TextStyle(fontSize: 40, color: Colors.white)),
-                      Text("To", style: TextStyle(fontSize: 40, color: Colors.white)),
-                      Text("Ellemora", style: TextStyle(fontSize: 40, color: Colors.white)),
-                    ],
-                  ),
-                ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: screenWidth * 0.05),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: BorderRadius.circular(10),
               ),
-              SizedBox(height: screenWidth * 0.2),
-              if (!isLogin)
-                Column(
-                  children: [
-                    SizedBox(
-                      width: screenWidth > 600 ? 400 : screenWidth,
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Name',
-                          prefixIcon: const Icon(Icons.person),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: screenWidth > 600 ? 400 : screenWidth,
-                      child: TextField(
-                        controller: _phoneController,
-                        decoration: InputDecoration(
-                          labelText: 'Phone Number',
-                          prefixIcon: const Icon(Icons.phone),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        keyboardType: TextInputType.phone,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              SizedBox(
-                width: screenWidth > 600 ? 400 : screenWidth,
-                child: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+              padding: const EdgeInsets.all(15.0),
+              child: const Column(
+                children: [
+                  Text(
+                    "Welcome",
+                    style: TextStyle(fontSize: 36, color: Colors.white),
                   ),
-                ),
+                  Text(
+                    "To",
+                    style: TextStyle(fontSize: 36, color: Colors.white),
+                  ),
+                  Text(
+                    "Ellemora",
+                    style: TextStyle(fontSize: 36, color: Colors.white),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: screenWidth > 600 ? 400 : screenWidth,
-                child: TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.password),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+            ),
+            SizedBox(height: screenWidth * 0.1),
+            if (!isLogin)
+              Column(
+                children: [
+                  _buildTextField(
+                    labelText: 'Name',
+                    icon: Icons.person,
+                    controller: _nameController,
                   ),
-                  obscureText: true,
-                ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    labelText: 'Phone Number',
+                    icon: Icons.phone,
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
-              const SizedBox(height: 50),
-              SizedBox(
-                width: screenWidth > 600 ? 400 : screenWidth,
-                height: 45,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                  ),
-                  onPressed: _authenticate,
-                  child: Text(
-                    isLogin ? 'Login' : 'Sign Up',
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
+            _buildTextField(
+              labelText: 'Email',
+              icon: Icons.email,
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              labelText: 'Password',
+              icon: Icons.lock,
+              controller: _passwordController,
+              obscureText: true,
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: screenWidth > 600 ? 400 : screenWidth * 0.9,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isLogin = !isLogin;
-                  });
-                },
+                onPressed: _authenticate,
                 child: Text(
-                  isLogin
-                      ? 'Don\'t have an account? Sign Up'
-                      : 'Already have an account? Login',
-                  style: TextStyle(fontSize: screenWidth > 600 ? 22 : 20),
+                  isLogin ? 'Login' : 'Sign Up',
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isLogin
+                      ? 'Don\'t have an account?'
+                      : 'Already have an account?',
+                  style: TextStyle(fontSize: screenWidth > 600 ? 18 : 16),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isLogin = !isLogin;
+                    });
+                  },
+                  child: Text(
+                    isLogin ? 'Sign Up' : 'Login',
+                    style: TextStyle(fontSize: screenWidth > 600 ? 18 : 16),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
